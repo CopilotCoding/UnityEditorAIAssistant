@@ -36,7 +36,7 @@ public class AIWindow : EditorWindow
         }
 
         // Response output (selectable)
-        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(600));
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(600)); // Adjust GUILayout.Height to whatever you want.
         response = EditorGUILayout.TextArea(response, GUILayout.ExpandHeight(true));
         EditorGUILayout.EndScrollView();
 
