@@ -38,13 +38,14 @@ public static class ProjectIndexer
 
         Regex classRegex = new Regex(@"class\s+(\w+)");
         Regex methodRegex = new Regex(@"(public|private|protected|internal)\s+[\w<>\[\]]+\s+(\w+)\s*\(");
+        Regex fieldRegex = new Regex(@"(public|private|protected|internal)\s+[\w<>\[\]]+\s+(\w+)\s*(=|;)");
+        // Matches lines like "public int health;" or "private Rigidbody rb = null;"
 
         foreach (string file in files)
         {
             string relativePath = "Assets" + file.Substring(Application.dataPath.Length).Replace("\\", "/");
             string content = File.ReadAllText(file);
 
-            // Track classes in this file
             var classes = classRegex.Matches(content);
             if (classes.Count > 0)
             {
@@ -54,12 +55,22 @@ public static class ProjectIndexer
                     _index.Add($"File: {relativePath}");
                     _index.Add($"  Class: {className}");
 
-                    // Track methods inside this class
+                    // Track fields
+                    foreach (Match fieldMatch in fieldRegex.Matches(content))
+                    {
+                        if (fieldMatch.Index > classMatch.Index) // Ensure it's inside the class
+                        {
+                            string fieldName = fieldMatch.Groups[2].Value;
+                            _index.Add($"    Field: {fieldName}");
+                        }
+                    }
+
+                    // Track methods
                     foreach (Match methodMatch in methodRegex.Matches(content))
                     {
-                        string methodName = methodMatch.Groups[2].Value;
                         if (methodMatch.Index > classMatch.Index)
                         {
+                            string methodName = methodMatch.Groups[2].Value;
                             _index.Add($"    Method: {methodName}()");
                         }
                     }

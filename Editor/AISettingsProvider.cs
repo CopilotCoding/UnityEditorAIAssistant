@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEngine;
 
 /// <summary>
 /// Provides a Unity Editor Settings page for the AI Assistant plugin.
